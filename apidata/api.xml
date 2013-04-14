@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<apis>
+    <api name="Java SE 7" baseurl="http://docs.oracle.com/javase/7/docs/api/" urlprefix="../">
+        <file name="api_1.txt"/>
+        <file name="api_2.txt"/>
+        <file name="api_3.txt"/>
+        <file name="api_4.txt"/>
+        <file name="api_5.txt"/>
+        <file name="api_6.txt"/>
+        <file name="api_7.txt"/>
+        <file name="api_8.txt"/>
+        <file name="api_9.txt"/>
+        <file name="api_10.txt"/>
+        <file name="api_11.txt"/>
+        <file name="api_12.txt"/>
+        <file name="api_13.txt"/>
+        <file name="api_14.txt"/>
+        <file name="api_15.txt"/>
+        <file name="api_16.txt"/>
+        <file name="api_17.txt"/>
+        <file name="api_18.txt"/>
+        <file name="api_19.txt"/>
+        <file name="api_20.txt"/>
+        <file name="api_21.txt"/>
+        <file name="api_22.txt"/>
+        <file name="api_23.txt"/>
+        <file name="api_24.txt"/>
+        <file name="api_25.txt"/>
+        <file name="api_26.txt"/>
+        <file name="api_27.txt"/>
+    </api>
+    <api name="Java EE 6" baseurl="http://java.sun.com/javaee/6/docs/api/" urlprefix="./">
+        <file name="api_ee.txt"/>
+    </api>
+    <api name="JSON.org" baseurl="http://www.json.org/javadoc/" urlprefix="./">
+        <file name="api_json.txt"/>
+    </api>
+    <src name="OpenJDK 7 Source" baseurl="http://hg.openjdk.java.net/jdk7/jdk7/jdk/file/tip/src/share/classes/"
+         urlsuffix="?view=markup">
+        <file name="src_list.txt"/>
+    </src>
+</apis>

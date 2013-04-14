@@ -1,0 +1,132 @@
+cp classpath
+linx!~linx@LinX.users.quakenet.org
+The classpath tells Java or the compiler in which jar files and folders to look for classes and resources. Use the -cp/-classpath run-time options to specify the classpath. Also see http://java.sun.com/javase/6/docs/technotes/tools/windows/classpath.html (or http://java.sun.com/javase/6/docs/technotes/tools/solaris/classpath.html) for more info.
+packages
+linx!~linx@LinX.users.quakenet.org
+please see http://java.sun.com/tutorial/java/interpack/packages.html
+codeconv
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html
+Botster
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+http://gitorious.org/Botster
+swingthreads
+linx!~linx@LinX.users.quakenet.org
+http://java.sun.com/docs/books/tutorial/uiswing/concurrency/index.html
+cb pb paste pastebin
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+Post your code at http://java.pastebin.com or http://pastie.org | Be sure to include any error messages or stack traces and post the resulting URL here.
+ping
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+pong!
+serialization
+linx!~linx@LinX.users.quakenet.org
+http://java.sun.com/developer/technicalArticles/Programming/serialization/
+tias
+Xabster!Xabster@Xabster.users.quakenet.org
+Why not try it and see?
+anyone
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+Instead of asking if anyone knows about something, ask a question about it.
+jls
+linx!~linx@LinX.users.quakenet.org
+http://java.sun.com/docs/books/jls/
+u plz ur
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+Please keep abbreviations such as u, ur, plz and thx to a minimum. Thanks.
+equals
+linx!~linx@LinX.users.quakenet.org
+http://leepoint.net/notes-java/data/expressions/22compareobjects.html. If you override equals you must also override hashcode - see See http://developer.java.sun.com/developer/Books/effectivejava/Chapter3.pdf
+elements
+linx!~linx@LinX.users.quakenet.org
+http://www.ambysoft.com/books/elementsJavaStyle.html
+ask
+Botster!Botster@Botster.users.quakenet.org
+Don't ask to ask, just ask.
+getjava jdk
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+Get the Java Development Kit (JDK) at http://java.sun.com/javase/downloads/index.jsp
+download
+hzh!~ray@hzh.users.quakenet.org
+http://java.sun.com/javase/downloads/index.jsp
+testcase
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+Please write a small, compilable program that illustrates the problem and nothing more. This will make it easier for people to help you.
+path
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+http://www.java.com/en/download/help/path.xml
+*import
+linx!~linx@LinX.users.quakenet.org
+Don't use wildcard import statements (import foo.bar.*;) as it clutters the local namespace, making class naming conflicts harder to identify (e.g. java.util.Date and java.sql.Date). See http://en.wikibooks.org/wiki/Java_Programming/Packages#Wildcard_imports for other reasons.
+git
+linx!~linx@LinX.users.quakenet.org
+http://www.eecs.harvard.edu/~cduan/technical/git/
+pm
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+Please experiment with the bot in private messages, to keep the amount of text in the channel down. Thanks.
+firstcup
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+http://java.sun.com/docs/books/tutorial/getStarted/cupojava/index.html
+graphics2d
+linx!~linx@LinX.users.quakenet.org
+http://java.sun.com/docs/books/tutorial/2d/index.html
+generics
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+http://java.sun.com/docs/books/tutorial/extra/generics/
+js
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+!Java is NOT JavaScript - please join #javascript after reading this: http://www.ericgiguere.com/articles/javascript-is-not-java.html
+en language english
+linx!~linx@LinX.users.quakenet.org
+Note that the preferred language on this channel is ENGLISH.
+smartq esr questions
+Botster!Botster@Botster.users.quakenet.org
+Please read http://catb.org/~esr/faqs/smart-questions.html for a tutorial on how to ask proper questions.
+tij
+Botster!Botster@Botster.users.quakenet.org
+Thinking In Java can be downloaded at http://www.mindviewinc.com/Books/downloads.html
+anyonehere
+linx!~linx@LinX.users.quakenet.org
+Don't ask if anyone is here, or if you can ask a question - just ask your real question (it's in the topic!!)
+21days
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+http://norvig.com/21-days.html
+webstart
+linx!~linx@LinX.users.quakenet.org
+http://java.sun.com/docs/books/tutorial/deployment/webstart/deploying.html
+npe
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+!NullPointerExceptions are easy to spot and deal with. For some tips on dealing with them, please see http://is.gd/ha7A and http://is.gd/n3kP
+askprotocol
+linx!~linx@LinX.users.quakenet.org
+The Ask To Ask protocol wastes more bandwidth than any version of the Ask protocol, so just ask your question.
+de german
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+Go to #java.de for help in German.
+newbieide
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+Newbies shouldn't start with IDEs. It's important to learn the environment and fundamentals of a language before offloading those to an IDE. Learn about packages and imports and classpaths. Learn how to compile and use the JDK tools. Get some basic grasp of the API layout. Learn how to do things then switch to an IDE to do them faster. See http://tinyurl.com/yvks48 and http://tinyurl.com/2cpn6o for more info.
+swing
+linx!~linx@LinX.users.quakenet.org
+http://java.sun.com/docs/books/tutorial/uiswing/index.html
+dontpm
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+Please ask your questions in the channel. That way more people will be able to join in the conversation and other people might learn from the answers you receive.
+homework hw
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+We will not solve your (home)work: we are in #java because we like Java and we like to help but we firmly believe in "give a hungry man a fish and he eats for a day - teach him how to fish and he will never be hungry all his life". So we will give out pointers freely but will not do your actual (home)work.
+tutorial
+Botster!Botster@Botster.users.quakenet.org
+The tutorial is at http://java.sun.com/docs/books/tutorial/
+beer
+Fx21!~fx@c80-216-120-112.bredband.comhem.se
+delicious
+readerrors
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+You should really read the error messages, they usually tell you exactly what you need to know.
+rbi
+Botster!Botster@Botster.users.quakenet.org
+http://java.sun.com/docs/books/tutorial/reallybigindex.html
+ide
+olafski!~egrimm@[Server]Egrimm.users.quakenet.org
+An IDE is an Integrated Development Environment. It can help you manage your code, provide code completion and search and many more things. Popular ones are Eclipse and NetBeans, both of which are free. Remember though that while they save you some work, it always helps to understand what is happening "under the hood".

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<servers>
+    <server name="QuakeNet" host="irc.quakenet.org" port="6667" botName="Botster">
+        <autosend target="Q@CServe.quakenet.org" message="AUTH user pass"/>
+        <channels>
+            <channel name="#java" password=""/>
+        </channels>
+        <privilegedUsers>
+            <user host="[Server]Egrimm.users.quakenet.org"/>
+            <user host="c80-216-120-112.bredband.comhem.se"/>
+            <user host="LinX.users.quakenet.org"/>
+            <user host="Xabster.users.quakenet.org"/>
+        </privilegedUsers>
+    </server>
+    <server name="FreeNode" host="irc.freenode.org" port="6667" botName="Botster">
+        <autosend target="NickServ" message="IDENTIFY password"/>
+        <channels>
+            <channel name="#android-dev" password=""/>
+        </channels>
+        <privilegedUsers>
+            <user host="unaffiliated/xabster"/>
+        </privilegedUsers>
+    </server>
+</servers>

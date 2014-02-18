@@ -13,13 +13,13 @@ class Sender {
     }
 
     public boolean canHandle(final String command) {
-        final int milisecondsNeeded = (2 + (command.length() / 128)) * 1000;
+        final int millisecondsNeeded = (2 + (command.length() / 128)) * 1000;
 
         if (timeVariable < System.currentTimeMillis()) {
-            timeVariable = System.currentTimeMillis() + milisecondsNeeded;
+            timeVariable = System.currentTimeMillis() + millisecondsNeeded;
             return true;
-        } else if ((timeVariable + milisecondsNeeded) < (System.currentTimeMillis() + SERVER_TIME_CONSTANT)) {
-            timeVariable += milisecondsNeeded;
+        } else if ((timeVariable + millisecondsNeeded) < (System.currentTimeMillis() + SERVER_TIME_CONSTANT)) {
+            timeVariable += millisecondsNeeded;
             return true;
         }
         return false;

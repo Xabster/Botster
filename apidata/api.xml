@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <apis>
-    <api name="Java SE 7" baseurl="http://docs.oracle.com/javase/7/docs/api/" urlprefix="../">
+    <api name="Java SE 8" baseurl="http://download.java.net/jdk8/docs/api/" urlprefix="../">
         <file name="api_1.txt"/>
         <file name="api_2.txt"/>
         <file name="api_3.txt"/>

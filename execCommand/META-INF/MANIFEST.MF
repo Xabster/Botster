@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: junit-4.10.jar tools.jar pircbot-1.5.0.jar
+Main-Class: Botster.Botster
+

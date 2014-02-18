@@ -58,7 +58,7 @@ class Factoid {
     }
 
     public boolean hasName(final String s) {
-        return this.names.contains(s);
+        return this.names.stream().anyMatch((x)->x.equalsIgnoreCase(s));
     }
 
     public String getHostMask() {

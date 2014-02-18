@@ -38,22 +38,17 @@ import java.util.*;
  */
 public class APICommand extends IRCCommand {
     private final static int FIND_ALL = 0, FIND_CLASSES = 1, FIND_METHODS = 2, FIND_FIELDS = 3, FIND_SOURCE = 4;
-    private final Map<String, List<String>> classes;
-    private final Map<String, List<String>> methods;
-    private final Map<String, List<String>> fields;
-    private final Map<String, List<String>> source;
-    private final List<String> apis;
+    private final Map<String, List<String>> classes = new HashMap<>();
+    private final Map<String, List<String>> methods = new HashMap<>();
+    private final Map<String, List<String>> fields = new HashMap<>();
+    private final Map<String, List<String>> source = new HashMap<>();
+    private final List<String> apis = new ArrayList<>();
 
     /**
      * Creates a new instance of APICommand and registers the "api", "class",
      * "method", "field" and "apis" response.
      */
     public APICommand() {
-        classes = new HashMap<>();
-        methods = new HashMap<>();
-        fields = new HashMap<>();
-        source = new HashMap<>();
-        apis = new ArrayList<>();
         initialize();
         addCommand("api");
         addCommand("class");
@@ -70,15 +65,8 @@ public class APICommand extends IRCCommand {
      * @param term the term to add
      * @param url  the url for the given term
      */
-    private static void addSearchTerm(final Map<String, List<String>> map, String term, final String url) {
-        term = term.toLowerCase();
-
-        List<String> list = map.get(term);
-        if (list == null) {
-            list = new ArrayList<>();
-            map.put(term, list);
-        }
-        list.add(url);
+    private static void addSearchTerm(final Map<String, List<String>> map, final String term, final String url) {
+        map.computeIfAbsent(term.toLowerCase(), (str) -> new ArrayList<>()).add(url);
     }
 
     /**
@@ -89,14 +77,7 @@ public class APICommand extends IRCCommand {
      * @return a List of Strings with the resulting URLs
      */
     private static List<String> get(final Map<String, List<String>> map, final String key) {
-
-        final List<String> value = map.get(key);
-
-        if (value == null) {
-            return Collections.emptyList();
-        }
-
-        return value;
+        return map.getOrDefault(key, Collections.emptyList());
     }
 
     /**
@@ -111,12 +92,11 @@ public class APICommand extends IRCCommand {
         final int length2 = string2.length();
         final int[][] leastOperationsTable = new int[length1 + 1][length2 + 1];
 
-        for (int i = 0; i <= length1; i++) {
+        for (int i = 0; i <= length1; i++)
             leastOperationsTable[i][0] = i;
-        }
-        for (int j = 0; j <= length2; j++) {
+
+        for (int j = 0; j <= length2; j++)
             leastOperationsTable[0][j] = j;
-        }
 
         for (int i = 1; i <= length1; i++) {
             for (int j = 1; j <= length2; j++) {
@@ -210,7 +190,6 @@ public class APICommand extends IRCCommand {
      * Loads the API files specified in apidata/api.xml
      */
     private void loadApis() throws Exception {
-
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder builder = factory.newDocumentBuilder();
         final Document document = builder.parse("apidata/api.xml");
@@ -232,12 +211,10 @@ public class APICommand extends IRCCommand {
                 final NodeList files = child.getChildNodes();
 
                 for (int j = 0; j < files.getLength(); j++) {
-
                     final Node file = files.item(j);
 
-                    if (!file.getNodeName().equals("file")) {
+                    if (!file.getNodeName().equals("file"))
                         continue;
-                    }
 
                     final String fileName = file.getAttributes().getNamedItem("name").getNodeValue();
 
@@ -254,12 +231,10 @@ public class APICommand extends IRCCommand {
                 final NodeList files = child.getChildNodes();
 
                 for (int j = 0; j < files.getLength(); j++) {
-
                     final Node file = files.item(j);
 
-                    if (!file.getNodeName().equals("file")) {
+                    if (!file.getNodeName().equals("file"))
                         continue;
-                    }
 
                     final String fileName = file.getAttributes().getNamedItem("name").getNodeValue();
 
@@ -270,26 +245,21 @@ public class APICommand extends IRCCommand {
     }
 
     private void parseSrc(final String file, final String baseurl, final String urlsuffix) throws Exception {
+        try (final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File("apidata", file)), "ISO-8859-1"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                final int packEnd = line.lastIndexOf('/');
+                final String pack = line.substring(0, packEnd).replace('/', '.');
+                String className = line.substring(packEnd + 1);
 
-        final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File("apidata", file)), "ISO-8859-1"));
+                // remove .java
+                className = className.substring(0, className.length() - 5);
 
-        String line;
+                final String fullUrl = baseurl + line + urlsuffix;
 
-        while ((line = br.readLine()) != null) {
-
-            final int packEnd = line.lastIndexOf('/');
-            final String pack = line.substring(0, packEnd).replace('/', '.');
-            String className = line.substring(packEnd + 1);
-
-            // remove .java
-            className = className.substring(0, className.length() - 5);
-
-            //System.out.println(className);
-
-            final String fullUrl = baseurl + line + urlsuffix;
-
-            addSearchTerm(source, className, fullUrl);
-            addSearchTerm(source, pack + "." + className, fullUrl);
+                addSearchTerm(source, className, fullUrl);
+                addSearchTerm(source, pack + "." + className, fullUrl);
+            }
         }
     }
 
@@ -300,26 +270,16 @@ public class APICommand extends IRCCommand {
      * @param file the name of the file to parse
      */
     private void parse(final String file, final String baseurl, final String urlprefix) throws Exception {
-
-        final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File("apidata", file)), "ISO-8859-1"));
-
-        String line;
-
-        while ((line = br.readLine()) != null) {
-
-            int foundIndex = line.indexOf("<dt>");
-
-            while (foundIndex != -1) {
-
-                handleEntry(line.substring(foundIndex), baseurl, urlprefix);
-
-                // try to find next <DT>
-
-                foundIndex = line.indexOf("<dt>", foundIndex + 1);
+        try (final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File("apidata", file)), "ISO-8859-1"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                int foundIndex = line.indexOf("<dt>");
+                while (foundIndex != -1) {
+                    handleEntry(line.substring(foundIndex), baseurl, urlprefix);
+                    foundIndex = line.indexOf("<dt>", foundIndex + 1);
+                }
             }
         }
-
-        br.close();
     }
 
     /**
@@ -328,13 +288,9 @@ public class APICommand extends IRCCommand {
      * @param entry the entry to handle
      */
     private void handleEntry(final String entry, final String baseurl, final String urlprefix) {
-
         final int urlStart = 13 + urlprefix.length();
-
         final int endIndex = entry.indexOf('\"', urlStart);
-
         final String url = entry.substring(urlStart, endIndex);
-
         final int slashIndex = url.lastIndexOf("/");
 
         String pack = url.substring(0, slashIndex);
@@ -356,18 +312,16 @@ public class APICommand extends IRCCommand {
             final String className = name.substring(0, hashPos - 5);
             final String member = name.substring(hashPos + 1);
 
-            if (member.endsWith(")")) {
-                final int parenPos = member.indexOf('(');
+            if (member.endsWith("-")) {
+                final int parenPos = member.indexOf('-');
 
                 String methodName = member.substring(0, parenPos);
 
-                if (methodName.equals(className)) {
+                if (methodName.equals(className))
                     methodName = "<init>";
-                }
 
-                if (!methodName.equals("<init>")) {
+                if (!methodName.equals("<init>"))
                     addSearchTerm(methods, methodName, fullUrl);
-                }
 
                 addSearchTerm(methods, className + "." + methodName, fullUrl);
                 addSearchTerm(methods, pack + "." + className + "." + methodName, fullUrl);
@@ -388,31 +342,21 @@ public class APICommand extends IRCCommand {
      * @return a SearchResults with the resulting matches
      */
     SearchResults search(String term, final int limit) {
-
-        term = term.toLowerCase();
-        term = term.replace(" ", "");
+        term = term.toLowerCase().replace(" ", "");
 
         final List<String> results = new ArrayList<>();
 
-        if (limit == FIND_ALL || limit == FIND_CLASSES) {
+        if (limit == FIND_ALL || limit == FIND_CLASSES)
             results.addAll(get(classes, term));
-        }
-
-        if (limit == FIND_ALL || limit == FIND_METHODS) {
+        if (limit == FIND_ALL || limit == FIND_METHODS)
             results.addAll(get(methods, term));
-        }
-
-        if (limit == FIND_ALL || limit == FIND_FIELDS) {
+        if (limit == FIND_ALL || limit == FIND_FIELDS)
             results.addAll(get(fields, term));
-        }
-
-        if (limit == FIND_SOURCE) {
+        if (limit == FIND_SOURCE)
             results.addAll(get(source, term));
-        }
 
-        if (results.isEmpty()) {
+        if (results.isEmpty())
             return bestMatch(term, limit);
-        }
 
         return new SearchResults(SearchResults.EXACT_MATCH, Collections.unmodifiableList(results));
     }
@@ -425,39 +369,29 @@ public class APICommand extends IRCCommand {
      * @return a SearchResults the most likely matches
      */
     private SearchResults bestMatch(final String term, final int limit) {
-
         final List<Map.Entry<String, List<String>>> lookIn = new ArrayList<>();
 
-        if (limit == FIND_ALL || limit == FIND_CLASSES) {
+        if (limit == FIND_ALL || limit == FIND_CLASSES)
             lookIn.addAll(classes.entrySet());
-        }
-
-        if (limit == FIND_ALL || limit == FIND_METHODS) {
+        if (limit == FIND_ALL || limit == FIND_METHODS)
             lookIn.addAll(methods.entrySet());
-        }
-
-        if (limit == FIND_ALL || limit == FIND_FIELDS) {
+        if (limit == FIND_ALL || limit == FIND_FIELDS)
             lookIn.addAll(fields.entrySet());
-        }
-
-        if (limit == FIND_SOURCE) {
+        if (limit == FIND_SOURCE)
             lookIn.addAll(source.entrySet());
-        }
 
         final List<String> results = new ArrayList<>();
         int bestDist = Integer.MAX_VALUE;
 
         for (final Map.Entry<String, List<String>> entry : lookIn) {
-
             final int distance = damLevDistance(term, entry.getKey());
 
             if (distance < bestDist) {
                 bestDist = distance;
                 results.clear();
                 results.addAll(entry.getValue());
-            } else if (distance == bestDist) {
+            } else if (distance == bestDist)
                 results.addAll(entry.getValue());
-            }
         }
 
         return new SearchResults(SearchResults.BEST_MATCH, Collections.unmodifiableList(results));

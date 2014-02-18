@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="Botster:jar">
+    <output-path>E:/Bot</output-path>
+    <root id="root">
+      <element id="archive" name="Botster.jar">
+        <element id="module-output" name="Botster" />
+      </element>
+      <element id="file-copy" path="$APPLICATION_HOME_DIR$/lib/junit-4.10.jar" />
+      <element id="library" level="project" name="tools" />
+      <element id="library" level="project" name="pircbot:pircbot:1.5.0" />
+    </root>
+  </artifact>
+</component>

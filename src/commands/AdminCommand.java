@@ -49,20 +49,20 @@ public class AdminCommand extends IRCCommand {
                 getBot().getCommandSender().quitServer("Leaving!");
                 System.exit(0);
             }
-            if (command.equals("reload")) {
+            else if (command.equals("reload")) {
                 getBot().reloadCommands();
                 ret = "Reloaded commands.";
             }
-            if (command.equals("join")) {
+            else if (command.equals("join")) {
                 getBot().getCommandSender().joinChannel(message);
             }
-            if (command.equals("part")) {
+            else if (command.equals("part")) {
                 getBot().getCommandSender().partChannel(message);
             }
-            if (command.equals("nick")) {
+            else if (command.equals("nick")) {
                 getBot().getCommandSender().changeNick(message);
             }
-            if (command.equals("load")) {
+            else if (command.equals("load")) {
                 final Set<String> newCommands = getBot().loadCommand(message);
                 if (newCommands == null || newCommands.size() == 0) {
                     ret = "Something went wrong; either you specified an unknown plugin or the plugin was already loaded.";

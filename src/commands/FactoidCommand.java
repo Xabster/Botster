@@ -24,8 +24,10 @@ import Botster.IRCCommand;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The FactoidCommand provides a number of responses to answer questions asked
@@ -67,17 +69,16 @@ public class FactoidCommand extends IRCCommand {
      * lines, the name of the factoid and the response.
      */
     private void loadFactoids() {
-        try {
+        try (final Scanner scan = new Scanner(new File("factoids.txt"))) {
             factoids = new HashSet<>();
-            final Scanner scan = new Scanner(new File("factoids.txt"));
             while (scan.hasNext()) {
                 final String[] factoidNames = scan.nextLine().split(" ");
                 final String factoidHostMask = scan.nextLine();
                 final String factoidText = scan.nextLine();
                 final Factoid f = new Factoid(factoidNames, factoidHostMask, factoidText);
-                for (final String factoidName : factoidNames) {
+
+                for (final String factoidName : factoidNames)
                     addCommand(factoidName);
-                }
                 factoids.add(f);
             }
         } catch (Exception e) {
@@ -89,28 +90,22 @@ public class FactoidCommand extends IRCCommand {
      * Updates factoids.txt and protectedfactoids.txt
      */
     private void saveFactoids() {
-        try {
-            final PrintWriter pw = new PrintWriter(new File("factoids.txt"));
+        try (final PrintWriter pw = new PrintWriter(new File("factoids.txt"))) {
             for (final Factoid f : factoids) {
-                final Set<String> var = f.getNames();
-                pw.println(Botster.implodeStrings(var.toArray(new String[var.size()])));
+                pw.println(f.getNames().stream().map((s) -> s).collect(Collectors.joining(" ")));
                 pw.println(f.getHostMask());
                 pw.println(f.getText());
             }
-            pw.close();
-
             getBot().reloadCommands();
         } catch (Exception e) {
-            // do nothing
+            e.printStackTrace();
         }
     }
 
     private Factoid findFactoid(final String name) {
-        for (final Factoid f : factoids) {
-            if (f.hasName(name)) {
+        for (final Factoid f : factoids)
+            if (f.hasName(name))
                 return f;
-            }
-        }
         return null;
     }
 

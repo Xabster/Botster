@@ -45,10 +45,9 @@ public class TranslateCommand extends IRCCommand {
      */
     @Override
     public String getReply(final String command, final String message) {
-        String language = "en";
-        if (getChannel().equals("#java.de")) {
-            language = "de";
-        }
+
+        String language = getChannel().equals("#java.de") ? "de" : "en";
+
         String ret = "http://translate.google.com/#auto%7c" + language + "%7c";
         String translate = getBot().getLastLine(getLogin() + "@" + getHostName());
         if (translate == null) {

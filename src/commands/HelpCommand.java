@@ -42,7 +42,6 @@ public class HelpCommand extends IRCCommand {
     public String getReply(final String command, final String message) {
         String ret = "";
         int page;
-        final int perpage = 30;
 
         try {
             page = Integer.parseInt(message);
@@ -50,13 +49,12 @@ public class HelpCommand extends IRCCommand {
             page = 1;
         }
 
-        if (command.equals("help")) {
-            ret = getPage(page, perpage, getBot().getPublicCommands());
-        } else if (command.equals("help2")) {
-            if (isAuthorizedUser()) {
-                ret = getPage(page, perpage, getBot().getRestrictedCommands());
-            }
-        }
+        int PER_PAGE = 30;
+        if (command.equals("help"))
+            ret = getPage(page, PER_PAGE, getBot().getPublicCommands());
+        else if (command.equals("help2") && isAuthorizedUser())
+            ret = getPage(page, PER_PAGE, getBot().getRestrictedCommands());
+
         return ret;
     }
 
@@ -67,13 +65,11 @@ public class HelpCommand extends IRCCommand {
 
         final int totalPages = (list.size() - 1) / perpage + 1;
 
-        if (page < 1) {
+        if (page < 1)
             page = 1;
-        }
 
-        if (page > totalPages) {
+        if (page > totalPages)
             page = totalPages;
-        }
 
         final int startIndex = (page - 1) * perpage;
 

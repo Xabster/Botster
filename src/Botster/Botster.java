@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class Botster extends PircBot {
@@ -249,7 +248,7 @@ public class Botster extends PircBot {
     }
 
     private boolean ignoreIfRepeated(final String message, final String userMask) {
-        if (!isAuthorizedUser(userMask.substring(userMask.indexOf('@')+1))) {
+        if (!isAuthorizedUser(userMask.substring(userMask.indexOf('@') + 1))) {
             if (lastLines.containsKey(userMask)) {
                 if (message.trim().equalsIgnoreCase(lastLines.get(userMask).trim())) {
                     long time = 0;

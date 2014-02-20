@@ -22,7 +22,7 @@ public class FactoidCommand extends IRCCommand {
     private static final String UNALIAS_FACTOID = "unalias";
     private static final String ALIASES_FACTOID = "aliases";
     private static final String FACTOID_COMMAND = "factoid";
-    public static final String FACTOIDS_TXT = "factoids.txt";
+    private static final String FACTOIDS_TXT = "factoids.txt";
 
     /**
      * The factoids available for this FactoidCommand. Keys are factoid names,

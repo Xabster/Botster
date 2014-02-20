@@ -130,12 +130,12 @@ public class ExecCommand extends IRCCommand {
             e.printStackTrace();
             return e.toString();
         }
-
+        int exitCode = 666;
         final int error = com.sun.tools.javac.Main.compile(new String[]{file}, new PrintWriter(compilerOutput));
         if (error != 0)
             handleCompileError(compilerOutput, output);
         else
-            runCode(folder, output);
+            exitCode = runCode(folder, output);
 
         final int count = 3;
         for (int i = 0; i < Math.min(count, output.size()); i++) {
@@ -143,41 +143,40 @@ public class ExecCommand extends IRCCommand {
             ret.append("\r\n");
         }
 
-        if (output.size() == 0)
-            ret.append("Execution successful. No output.");
+        if (output.size() == 0) {
+            ret.append("Execution successful. No output. Exit code: ");
+            ret.append(exitCode);
+        }
 
         return ret.toString();
     }
 
-    private void runCode(final String folder, final List<String> output) {
+    private int runCode(final String folder, final List<String> output) {
+        int returnCode = 666;
         final IntegerCallable intCall = new IntegerCallable(output);
+
         try {
-            try {
-                final int returnCode = timedCall(intCall);
-            } catch (TimeoutException e) {
-                // Handle timeout here
-                output.add("Execution timed out");
-                if (intCall.getProcess() != null)
-                    intCall.getProcess().destroy();
-            } finally {
-                final File d = new File(folder);
-                final File[] files = d.listFiles();
-                if (files != null) {
-                    for (final File f : files) {
-                        if (f.getName().endsWith(".class")) {
-                            if (!f.delete()) {
-                                System.out.println("Could not delete file: " + f.getAbsolutePath());
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (InterruptedException e) {
+            returnCode = timedCall(intCall);
+        } catch (TimeoutException e) {
+            // Handle timeout here
+            output.add("Execution timed out");
+            if (intCall.getProcess() != null)
+                intCall.getProcess().destroy();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             output.add("Error executing: " + e.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } finally {
+            deleteTempClassFiles(folder);
         }
+        return returnCode;
+    }
+
+    private void deleteTempClassFiles(String folder) {
+        final File[] files = new File(folder).listFiles();
+        if (files != null)
+            for (File f : files)
+                if (f.getName().endsWith(".class") && !f.delete())
+                    System.out.println("Could not delete file: " + f.getAbsolutePath());
     }
 
     private void handleCompileError(final StringWriter compilerOutput, final List<String> output) {
@@ -197,8 +196,8 @@ public class ExecCommand extends IRCCommand {
             final ProcessBuilder pb = new ProcessBuilder("java", "-cp", "execCommand/", "-Djava.security.manager", "-Djava.security.policy=execCommand/exec.policy", "-Xmx64M", "Exec");
             pb.redirectErrorStream(true);
             process = pb.start();
-            final Scanner scan = new Scanner(process.getInputStream());
 
+            final Scanner scan = new Scanner(process.getInputStream());
             while (scan.hasNext())
                 output.add(scan.nextLine());
 

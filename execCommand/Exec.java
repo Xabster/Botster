@@ -1,43 +1,35 @@
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.*;
-import java.util.zip.*;
-import java.lang.reflect.*;
-import java.math.*;
-import java.text.*;
 
 public class Exec {
     public static void sysout(Object object) {
-        if (object instanceof Object[]) {
+        if (object instanceof Object[])
             System.out.println(Arrays.deepToString((Object[]) object));
-        } else if (object instanceof byte[]) {
+        else if (object instanceof byte[])
             System.out.println(Arrays.toString((byte[]) object));
-        } else if (object instanceof short[]) {
+        else if (object instanceof short[])
             System.out.println(Arrays.toString((short[]) object));
-        } else if (object instanceof int[]) {
+        else if (object instanceof int[])
             System.out.println(Arrays.toString((int[]) object));
-        } else if (object instanceof long[]) {
+        else if (object instanceof long[])
             System.out.println(Arrays.toString((long[]) object));
-        } else if (object instanceof float[]) {
+        else if (object instanceof float[])
             System.out.println(Arrays.toString((float[]) object));
-        } else if (object instanceof double[]) {
+        else if (object instanceof double[])
             System.out.println(Arrays.toString((double[]) object));
-        } else if (object instanceof char[]) {
+        else if (object instanceof boolean[])
+            System.out.println(Arrays.toString((boolean[]) object));
+        else if (object instanceof char[]) {
             char[] chars = (char[]) object;
             String[] out = new String[chars.length];
             for (int i = 0; i < chars.length; i++) {
-                if (Character.isISOControl(chars[i])) {
+                if (Character.isISOControl(chars[i]))
                     out[i] = "\\" + (int) chars[i];
-                } else {
+                else
                     out[i] = Character.toString(chars[i]);
-                }
             }
             System.out.println(Arrays.toString(out));
-        } else if (object instanceof boolean[]) {
-            System.out.println(Arrays.toString((boolean[]) object));
-        } else {
+        } else
             System.out.println(object);
-        }
     }
 
     public static void main(String[] args) throws Throwable {

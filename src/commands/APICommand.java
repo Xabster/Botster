@@ -18,7 +18,6 @@
 
 package commands;
 
-import Botster.Botster;
 import Botster.IRCCommand;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -32,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The APICommand provides API searches.
@@ -101,18 +101,16 @@ public class APICommand extends IRCCommand {
         for (int i = 1; i <= length1; i++) {
             for (int j = 1; j <= length2; j++) {
                 final int diff;
-                if (string1.charAt(i - 1) == string2.charAt(j - 1)) {
+                if (string1.charAt(i - 1) == string2.charAt(j - 1))
                     diff = 0;
-                } else {
+                else
                     diff = 1;
-                }
                 leastOperationsTable[i][j] = Math.min(Math.min(leastOperationsTable[i - 1][j] + 1, // insertion
                         leastOperationsTable[i][j - 1] + 1), // deletion
                         leastOperationsTable[i - 1][j - 1] + diff); // substitution
 
                 if (i > 1 && j > 1 && string1.charAt(i - 1) == string2.charAt(j - 2) && string1.charAt(i - 2) == string2.charAt(j - 1)) {
-                    leastOperationsTable[i][j] = Math.min(leastOperationsTable[i][j], leastOperationsTable[i - 2][j - 2] + diff // transposition
-                    );
+                    leastOperationsTable[i][j] = Math.min(leastOperationsTable[i][j], leastOperationsTable[i - 2][j - 2] + diff); // transposition
                 }
             }
         }
@@ -139,7 +137,7 @@ public class APICommand extends IRCCommand {
     public String getReply(final String command, final String message) {
         String ret;
         if (command.equals("apis")) {
-            ret = "All loaded APIs: " + Botster.implodeStrings(apis.toArray(new String[apis.size()]), ", ");
+            ret = "All loaded APIs: " + apis.stream().collect(Collectors.joining(", "));
         } else {
             if (message.isEmpty()) {
                 ret = getNickName() + ", please provide something to search for.";
@@ -164,19 +162,18 @@ public class APICommand extends IRCCommand {
                 }
                 if (results.urls.size() != 0) {
                     final String[] urlStrings = new String[Math.min(3, results.urls.size())];
-                    for (int i = 0; i < Math.min(3, results.urls.size()); i++) {
+                    for (int i = 0; i < Math.min(3, results.urls.size()); i++)
                         urlStrings[i] = results.urls.get(i);
-                    }
-                    ret = Botster.implodeStrings(urlStrings, " | ");
-                    if (results.urls.size() > 3) {
+
+                    ret = Arrays.stream(urlStrings).collect(Collectors.joining(" | "));
+                    if (results.urls.size() > 3)
                         ret += " (" + results.urls.size() + " total)";
-                    }
+
                     if (results.type == SearchResults.BEST_MATCH) {
-                        if (urlStrings.length > 1) {
+                        if (urlStrings.length > 1)
                             ret = "Best matches: " + ret;
-                        } else {
+                        else
                             ret = "Best match: " + ret;
-                        }
                     }
                 } else {
                     ret = "No matches found.";

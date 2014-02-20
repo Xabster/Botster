@@ -36,15 +36,6 @@ class Factoid {
         setText(text);
     }
 
-    public boolean equals(final Factoid f) {
-        /*
-         * for (String thisName : this.names) { for (String thatName :
-		 * f.getNames()) { if (thisName.equals(thatName)) return true; } }
-		 * return false;
-		 */
-        return this == f;
-    }
-
     public void addName(final String s) {
         this.names.add(s);
     }
@@ -58,7 +49,7 @@ class Factoid {
     }
 
     public boolean hasName(final String s) {
-        return this.names.stream().anyMatch((x)->x.equalsIgnoreCase(s));
+        return this.names.stream().anyMatch(x -> x.equalsIgnoreCase(s));
     }
 
     public String getHostMask() {

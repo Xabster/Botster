@@ -44,33 +44,32 @@ public class AdminCommand extends IRCCommand {
     @Override
     public String getReply(final String command, final String message) {
         String ret = null;
-        if (isAuthorizedUser()) {
-            if (command.equals("quit")) {
-                getBot().getCommandSender().quitServer("Leaving!");
-                System.exit(0);
+        if (isAuthorizedUser())
+            switch (command) {
+                case "quit":
+                    getBot().getCommandSender().quitServer("Leaving!");
+                    System.exit(0);
+                case "reload":
+                    getBot().reloadCommands();
+                    ret = "Reloaded commands.";
+                    break;
+                case "join":
+                    getBot().getCommandSender().joinChannel(message);
+                    break;
+                case "part":
+                    getBot().getCommandSender().partChannel(message);
+                    break;
+                case "nick":
+                    getBot().getCommandSender().changeNick(message);
+                    break;
+                case "load":
+                    final Set<String> newCommands = getBot().loadCommand(message);
+                    if (newCommands == null || newCommands.size() == 0)
+                        ret = "Something went wrong; either you specified an unknown plugin or the plugin was already loaded.";
+                    else
+                        ret = "Loaded the " + message + " plugin with the following commands: " + newCommands;
+                    break;
             }
-            else if (command.equals("reload")) {
-                getBot().reloadCommands();
-                ret = "Reloaded commands.";
-            }
-            else if (command.equals("join")) {
-                getBot().getCommandSender().joinChannel(message);
-            }
-            else if (command.equals("part")) {
-                getBot().getCommandSender().partChannel(message);
-            }
-            else if (command.equals("nick")) {
-                getBot().getCommandSender().changeNick(message);
-            }
-            else if (command.equals("load")) {
-                final Set<String> newCommands = getBot().loadCommand(message);
-                if (newCommands == null || newCommands.size() == 0) {
-                    ret = "Something went wrong; either you specified an unknown plugin or the plugin was already loaded.";
-                } else {
-                    ret = "Loaded the " + message + " plugin with the following commands: " + newCommands;
-                }
-            }
-        }
         return ret;
     }
 }

@@ -88,9 +88,9 @@ public class HelpCommand extends IRCCommand {
         }
 
         sb.append(": ");
-        for (final String s : sublist) {
+        for (final String s : sublist)
             sb.append(s).append(", ");
-        }
+
         sb.setLength(sb.length() - 2);
 
         return sb.toString();

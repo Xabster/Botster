@@ -25,7 +25,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.tools.ToolProvider;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -34,8 +33,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Botster extends PircBot {
@@ -143,6 +140,7 @@ public class Botster extends PircBot {
         final NodeList userChildren = serverChild.getChildNodes();
         for (int k = 0; k < userChildren.getLength(); k++) {
             final Node userChild = userChildren.item(k);
+
             if (!userChild.getNodeName().equals("user"))
                 continue;
 
@@ -163,12 +161,8 @@ public class Botster extends PircBot {
         bot.connect(serverHost, serverPort);
     }
 
-    public static String implodeStrings(final String[] ss, final String separator) {
-        return Arrays.stream(ss).map(x -> x).collect(Collectors.joining(separator));
-    }
-
     public void reloadCommands() {
-        commands = new HashMap<>();
+        this.commands = new HashMap<>();
         this.publicCommands = new HashSet<>();
         this.restrictedCommands = new HashSet<>();
         loadCommand("Admin");
@@ -178,8 +172,8 @@ public class Botster extends PircBot {
         loadCommand("Factoid");
         loadCommand("Translate");
         loadCommand("Help");
-        System.out.println("public: " + publicCommands);
-        System.out.println("restricted: " + restrictedCommands);
+        System.out.println("Loaded public commands: " + publicCommands);
+        System.out.println("Loaded restricted commands: " + restrictedCommands);
     }
 
     public Set<String> loadCommand(final String name) {
@@ -255,15 +249,17 @@ public class Botster extends PircBot {
     }
 
     private boolean ignoreIfRepeated(final String message, final String userMask) {
-        if (lastLines.containsKey(userMask)) {
-            if (message.trim().equalsIgnoreCase(lastLines.get(userMask).trim())) {
-                long time = 0;
-                if (lastMessage.containsKey(userMask))
-                    time = lastMessage.get(userMask);
+        if (!isAuthorizedUser(userMask.substring(userMask.indexOf('@')+1))) {
+            if (lastLines.containsKey(userMask)) {
+                if (message.trim().equalsIgnoreCase(lastLines.get(userMask).trim())) {
+                    long time = 0;
+                    if (lastMessage.containsKey(userMask))
+                        time = lastMessage.get(userMask);
 
-                if (System.currentTimeMillis() - time < 3000) {
-                    ignoredUsers.put(userMask, System.currentTimeMillis() + 60000);
-                    return true;
+                    if (System.currentTimeMillis() - time < 3000) {
+                        ignoredUsers.put(userMask, System.currentTimeMillis() + 60000);
+                        return true;
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ import org.jibble.pircbot.PircBot;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class CommandSender extends Thread {
+    public static final int THREAD_YIELD = 50;
     private final LinkedBlockingDeque<String> commands;
     private final Sender sender;
     private boolean askedToStop;
@@ -60,7 +61,7 @@ public class CommandSender extends Thread {
                     sender.execute(command);
                 } else {
                     commands.putFirst(command);
-                    sleep(50);
+                    sleep(THREAD_YIELD);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

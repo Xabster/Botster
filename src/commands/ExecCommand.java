@@ -3,6 +3,7 @@ package commands;
 import Botster.IRCCommand;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
@@ -17,9 +18,13 @@ import java.util.concurrent.*;
 public class ExecCommand extends IRCCommand {
 
     private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
+    public static final int MAX_LINE_LENGTH = 200;
+    public static final long PROCESS_TIMEOUT = 5L;
+    public static final int DEFAULT_ERRORCODE = 666;
 
     private final Set<String> execStart;
     private final Set<String> execEnd;
+    public static final int MAX_LINES = 3;
 
     public ExecCommand() {
         addCommand("exec");
@@ -81,7 +86,7 @@ public class ExecCommand extends IRCCommand {
     private static <T> T timedCall(final Callable<T> c) throws InterruptedException, ExecutionException, TimeoutException {
         final FutureTask<T> task = new FutureTask<>(c);
         THREAD_POOL.execute(task);
-        return task.get(5L, TimeUnit.SECONDS);
+        return task.get(PROCESS_TIMEOUT, TimeUnit.SECONDS);
     }
 
     @Override
@@ -97,7 +102,7 @@ public class ExecCommand extends IRCCommand {
      *                     needs to be printed, rather than executed. Basically replaces
      *                     message with sysout(message);
      */
-    private String exec(String message, final boolean isSysoutOnly) {
+    private String exec(final String message, final boolean isSysoutOnly) {
         final StringBuilder ret = new StringBuilder();
         final StringWriter compilerOutput = new StringWriter();
 
@@ -105,54 +110,67 @@ public class ExecCommand extends IRCCommand {
         final String filename = "Exec.java";
         final String file = folder + filename;
 
-        System.out.println(isSysoutOnly + " || " + message);
-
-        if (isSysoutOnly && message.charAt(message.length() - 1) == ';')
-            message = message.substring(0, message.length() - 1);
-        else if (!isSysoutOnly && message.charAt(message.length() - 1) != ';')
-            message = message + ";";
+        String fixedMessage = fixSemicolons(message, isSysoutOnly);
 
         final List<String> output = Collections.synchronizedList(new ArrayList<>());
 
         try (PrintWriter writer = new PrintWriter(file)) {
-            for (final String start : execStart) {
-                writer.println(start);
-                System.out.println(start);
-            }
-            writer.println(!isSysoutOnly ? message : "sysout(" + message + "\n);");
-            System.out.println(!isSysoutOnly ? message : "sysout(" + message + "\n);");
+            writeFile(fixedMessage, isSysoutOnly, writer);
+            int exitCode = compileAndRun(compilerOutput, folder, file, output);
 
-            for (final String end : execEnd) {
-                writer.println(end);
-                System.out.println(end);
+            for (int i = 0; i < Math.min(MAX_LINES, output.size()); i++) {
+                String curStr = output.get(i);
+                ret.append(curStr.substring(0, Math.min(MAX_LINE_LENGTH, curStr.length())));
+                ret.append("\r\n");
             }
-        } catch (Exception e) {
+
+            if (output.size() == 0)
+                ret.append(String.format("Execution successful. No output. Exit code: %d", exitCode));
+
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return e.toString();
-        }
-        int exitCode = 666;
-        final int error = com.sun.tools.javac.Main.compile(new String[]{file}, new PrintWriter(compilerOutput));
-        if (error != 0)
-            handleCompileError(compilerOutput, output);
-        else
-            exitCode = runCode(folder, output);
-
-        final int count = 3;
-        for (int i = 0; i < Math.min(count, output.size()); i++) {
-            ret.append(output.get(i).substring(0, Math.min(200, output.get(i).length())));
-            ret.append("\r\n");
-        }
-
-        if (output.size() == 0) {
-            ret.append("Execution successful. No output. Exit code: ");
-            ret.append(exitCode);
         }
 
         return ret.toString();
     }
 
+    private int compileAndRun(StringWriter compilerOutput, String folder, String file, List<String> output) {
+        int exitCode = DEFAULT_ERRORCODE;
+        final int error = com.sun.tools.javac.Main.compile(new String[]{file}, new PrintWriter(compilerOutput));
+        if (error != 0)
+            handleCompileError(compilerOutput, output);
+        else
+            exitCode = runCode(folder, output);
+        return exitCode;
+    }
+
+    private String fixSemicolons(String message, boolean isSysoutOnly) {
+        if (isSysoutOnly && message.charAt(message.length() - 1) == ';')
+            message = message.substring(0, message.length() - 1);
+        else if (!isSysoutOnly && message.charAt(message.length() - 1) != ';')
+            message = message + ";";
+        return message;
+    }
+
+    private void writeFile(String message, boolean isSysoutOnly, PrintWriter writer) {
+        for (final String start : execStart) {
+            writer.println(start);
+            System.out.println(start);
+        }
+
+        String sysoutWrapped = !isSysoutOnly ? message : "sysout(" + message + "\n);";
+
+        writer.println(sysoutWrapped);
+        System.out.println(sysoutWrapped);
+
+        for (final String end : execEnd) {
+            writer.println(end);
+            System.out.println(end);
+        }
+    }
+
     private int runCode(final String folder, final List<String> output) {
-        int returnCode = 666;
+        int returnCode = DEFAULT_ERRORCODE;
         final IntegerCallable intCall = new IntegerCallable(output);
 
         try {

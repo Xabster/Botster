@@ -32,10 +32,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 public class Botster extends PircBot {
     public final static String PREFIX = "-";
+    public static final int DEFAULT_PORT = 6667;
+    public static final int REPEAT_MESSAGE_LIMIT = 3000;
+    public static final int IGNORE_TIME = 60000;
+    public static final int RECONNECT_DELAY = 10000;
+    public static final int REJOIN_DELAY = 10000;
 
     private final Map<String, String> lastLines = new HashMap<>();
     private final Map<String, String> channels;
@@ -67,6 +73,24 @@ public class Botster extends PircBot {
         loadServerConfig();
     }
 
+    public static double[] genNumbers(int n) {
+        double[] result = new double[n+1];
+        Random random = new Random();
+
+        result[0] = 0.0;
+        result[n] = 1.0;
+
+        for (int i = 1; i < n; i++)
+            result[i] = random.nextDouble();
+
+        //Arrays.sort(result);
+
+        for(int i = 0; i < n; i++)
+            result[i] = result[i+1] - result[i];
+
+        return Arrays.copyOf(result, n);
+    }
+
     /**
      * Reads the server config from the given filename and creates bots.
      */
@@ -91,7 +115,7 @@ public class Botster extends PircBot {
                 try {
                     serverPort = Integer.parseInt(attributes.getNamedItem("port").getNodeValue());
                 } catch (NumberFormatException e) {
-                    serverPort = 6667;
+                    serverPort = DEFAULT_PORT;
                 }
                 final String botName = attributes.getNamedItem("botName").getNodeValue();
                 String autoSendTarget = null;
@@ -255,8 +279,8 @@ public class Botster extends PircBot {
                     if (lastMessage.containsKey(userMask))
                         time = lastMessage.get(userMask);
 
-                    if (System.currentTimeMillis() - time < 3000) {
-                        ignoredUsers.put(userMask, System.currentTimeMillis() + 60000);
+                    if (System.currentTimeMillis() - time < REPEAT_MESSAGE_LIMIT) {
+                        ignoredUsers.put(userMask, System.currentTimeMillis() + IGNORE_TIME);
                         return true;
                     }
                 }
@@ -288,7 +312,7 @@ public class Botster extends PircBot {
     public void onDisconnect() {
         while (!isConnected()) {
             try {
-                Thread.sleep(10000);
+                Thread.sleep(RECONNECT_DELAY);
                 reconnect();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -305,7 +329,7 @@ public class Botster extends PircBot {
             public void run() {
                 Botster.this.joinChannels();
             }
-        }, 2, 10000);
+        }, 2, REJOIN_DELAY);
     }
 
     protected void joinChannels() {

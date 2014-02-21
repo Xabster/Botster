@@ -38,11 +38,12 @@ import java.util.stream.Collectors;
  */
 public class APICommand extends IRCCommand {
     private final static int FIND_ALL = 0, FIND_CLASSES = 1, FIND_METHODS = 2, FIND_FIELDS = 3, FIND_SOURCE = 4;
+    public static final int URL_START_LENGTH = 13;
     private final Map<String, List<String>> classes = new HashMap<>();
     private final Map<String, List<String>> methods = new HashMap<>();
     private final Map<String, List<String>> fields = new HashMap<>();
     private final Map<String, List<String>> source = new HashMap<>();
-    private final List<String> apis = new ArrayList<>();
+    private final Collection<String> apis = new ArrayList<>();
 
     /**
      * Creates a new instance of APICommand and registers the "api", "class",
@@ -76,7 +77,7 @@ public class APICommand extends IRCCommand {
      * @param key the search term
      * @return a List of Strings with the resulting URLs
      */
-    private static List<String> get(final Map<String, List<String>> map, final String key) {
+    private static Collection<String> get(final Map<String, List<String>> map, final String key) {
         return map.getOrDefault(key, Collections.emptyList());
     }
 
@@ -87,7 +88,7 @@ public class APICommand extends IRCCommand {
      * @param string2 the string to compare to
      * @return the Damerau-Levenshtein distance between string1 and string2
      */
-    private static int damLevDistance(final String string1, final String string2) {
+    private static int damLevDistance(final CharSequence string1, final CharSequence string2) {
         final int length1 = string1.length();
         final int length2 = string2.length();
         final int[][] leastOperationsTable = new int[length1 + 1][length2 + 1];
@@ -284,8 +285,8 @@ public class APICommand extends IRCCommand {
      *
      * @param entry the entry to handle
      */
-    private void handleEntry(final String entry, final String baseurl, final String urlprefix) {
-        final int urlStart = 13 + urlprefix.length();
+    private void handleEntry(final String entry, final String baseurl, final CharSequence urlprefix) {
+        final int urlStart = URL_START_LENGTH + urlprefix.length();
         final int endIndex = entry.indexOf('\"', urlStart);
         final String url = entry.substring(urlStart, endIndex);
         final int slashIndex = url.lastIndexOf("/");
@@ -366,7 +367,7 @@ public class APICommand extends IRCCommand {
      * @return a SearchResults the most likely matches
      */
     private SearchResults bestMatch(final String term, final int limit) {
-        final List<Map.Entry<String, List<String>>> lookIn = new ArrayList<>();
+        final Collection<Map.Entry<String, List<String>>> lookIn = new ArrayList<>();
 
         if (limit == FIND_ALL || limit == FIND_CLASSES)
             lookIn.addAll(classes.entrySet());

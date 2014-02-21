@@ -30,6 +30,9 @@ import java.util.List;
  * commands people can give.
  */
 public class HelpCommand extends IRCCommand {
+
+    public static final int RESULTS_PER_PAGE = 30;
+
     /**
      * Creates a new instance of HelpCommand and registers the "help" response.
      */
@@ -49,11 +52,10 @@ public class HelpCommand extends IRCCommand {
             page = 1;
         }
 
-        int PER_PAGE = 30;
         if (command.equals("help"))
-            ret = getPage(page, PER_PAGE, getBot().getPublicCommands());
+            ret = getPage(page, RESULTS_PER_PAGE, getBot().getPublicCommands());
         else if (command.equals("help2") && isAuthorizedUser())
-            ret = getPage(page, PER_PAGE, getBot().getRestrictedCommands());
+            ret = getPage(page, RESULTS_PER_PAGE, getBot().getRestrictedCommands());
 
         return ret;
     }

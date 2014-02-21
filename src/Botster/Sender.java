@@ -3,6 +3,7 @@ package Botster;
 import org.jibble.pircbot.PircBot;
 
 class Sender {
+    public static final int QUAKENET_LINE_PENALTY = 128;
     private final PircBot pircBot;
     private static final long SERVER_TIME_CONSTANT = 10000;
     private long timeVariable;
@@ -13,7 +14,7 @@ class Sender {
     }
 
     public boolean canHandle(final String command) {
-        final int millisecondsNeeded = (2 + (command.length() / 128)) * 1000;
+        final int millisecondsNeeded = (2 + (command.length() / QUAKENET_LINE_PENALTY)) * 1000;
 
         if (timeVariable < System.currentTimeMillis()) {
             timeVariable = System.currentTimeMillis() + millisecondsNeeded;

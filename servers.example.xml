@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <servers>
-    <server name="QuakeNet" host="irc.quakenet.org" port="6667" botName="Botster">
+    <server name="QuakeNet" host="irc.quakenet.org" port="6667" botName="botster">
         <autosend target="Q@CServe.quakenet.org" message="AUTH user pass"/>
         <channels>
             <channel name="#java" password=""/>
@@ -12,7 +12,7 @@
             <user host="Xabster.users.quakenet.org"/>
         </privilegedUsers>
     </server>
-    <server name="FreeNode" host="irc.freenode.org" port="6667" botName="Botster">
+    <server name="FreeNode" host="irc.freenode.org" port="6667" botName="botster">
         <autosend target="NickServ" message="IDENTIFY password"/>
         <channels>
             <channel name="#android-dev" password=""/>

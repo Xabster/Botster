@@ -1,6 +1,6 @@
 package commands;
 
-import Botster.IRCCommand;
+import botster.IRCCommand;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -83,14 +83,14 @@ public class ExecCommand extends IRCCommand {
         execEnd.add("}");
     }
 
-    private static <T> T timedCall(final Callable<T> c) throws InterruptedException, ExecutionException, TimeoutException {
-        final FutureTask<T> task = new FutureTask<>(c);
+    private static <T> T timedCall(Callable<T> c) throws InterruptedException, ExecutionException, TimeoutException {
+        FutureTask<T> task = new FutureTask<>(c);
         THREAD_POOL.execute(task);
         return task.get(PROCESS_TIMEOUT, TimeUnit.SECONDS);
     }
 
     @Override
-    public String getReply(final String command, final String message) {
+    public String getReply(String command, String message) {
         return exec(message, command.equals("sysout"));
     }
 
@@ -102,17 +102,17 @@ public class ExecCommand extends IRCCommand {
      *                     needs to be printed, rather than executed. Basically replaces
      *                     message with sysout(message);
      */
-    private String exec(final String message, final boolean isSysoutOnly) {
-        final StringBuilder ret = new StringBuilder();
-        final StringWriter compilerOutput = new StringWriter();
+    private String exec(String message, boolean isSysoutOnly) {
+        StringBuilder ret = new StringBuilder();
+        StringWriter compilerOutput = new StringWriter();
 
-        final String folder = "execCommand" + File.separator;
-        final String filename = "Exec.java";
-        final String file = folder + filename;
+        String folder = "execCommand" + File.separator;
+        String filename = "Exec.java";
+        String file = folder + filename;
 
         String fixedMessage = fixSemicolons(message, isSysoutOnly);
 
-        final List<String> output = Collections.synchronizedList(new ArrayList<>());
+        List<String> output = Collections.synchronizedList(new ArrayList<>());
 
         try (PrintWriter writer = new PrintWriter(file)) {
             writeFile(fixedMessage, isSysoutOnly, writer);
@@ -136,7 +136,7 @@ public class ExecCommand extends IRCCommand {
 
     private int compileAndRun(StringWriter compilerOutput, String folder, String file, List<String> output) {
         int exitCode = DEFAULT_ERRORCODE;
-        final int error = com.sun.tools.javac.Main.compile(new String[]{file}, new PrintWriter(compilerOutput));
+        int error = com.sun.tools.javac.Main.compile(new String[]{file}, new PrintWriter(compilerOutput));
         if (error != 0)
             handleCompileError(compilerOutput, output);
         else
@@ -148,12 +148,12 @@ public class ExecCommand extends IRCCommand {
         if (isSysoutOnly && message.charAt(message.length() - 1) == ';')
             message = message.substring(0, message.length() - 1);
         else if (!isSysoutOnly && message.charAt(message.length() - 1) != ';')
-            message = message + ";";
+            message += ";";
         return message;
     }
 
     private void writeFile(String message, boolean isSysoutOnly, PrintWriter writer) {
-        for (final String start : execStart) {
+        for (String start : execStart) {
             writer.println(start);
             System.out.println(start);
         }
@@ -163,15 +163,15 @@ public class ExecCommand extends IRCCommand {
         writer.println(sysoutWrapped);
         System.out.println(sysoutWrapped);
 
-        for (final String end : execEnd) {
+        for (String end : execEnd) {
             writer.println(end);
             System.out.println(end);
         }
     }
 
-    private int runCode(final String folder, final List<String> output) {
+    private int runCode(String folder, List<String> output) {
         int returnCode = DEFAULT_ERRORCODE;
-        final IntegerCallable intCall = new IntegerCallable(output);
+        IntegerCallable intCall = new IntegerCallable(output);
 
         try {
             returnCode = timedCall(intCall);
@@ -190,15 +190,15 @@ public class ExecCommand extends IRCCommand {
     }
 
     private void deleteTempClassFiles(String folder) {
-        final File[] files = new File(folder).listFiles();
+        File[] files = new File(folder).listFiles();
         if (files != null)
             for (File f : files)
                 if (f.getName().endsWith(".class") && !f.delete())
                     System.out.println("Could not delete file: " + f.getAbsolutePath());
     }
 
-    private void handleCompileError(final StringWriter compilerOutput, final List<String> output) {
-        final String[] compOut = compilerOutput.toString().split("[\r\n]+");
+    private void handleCompileError(StringWriter compilerOutput, List<String> output) {
+        String[] compOut = compilerOutput.toString().split("[\r\n]+");
         Collections.addAll(output, compOut);
     }
 
@@ -206,19 +206,19 @@ public class ExecCommand extends IRCCommand {
         private final List<String> output;
         private Process process;
 
-        public IntegerCallable(final List<String> out) {
+        public IntegerCallable(List<String> out) {
             this.output = out;
         }
 
         public Integer call() throws Exception {
-            final ProcessBuilder pb = new ProcessBuilder("java", "-cp", "execCommand/", "-Djava.security.manager", "-Djava.security.policy=execCommand/exec.policy", "-Xmx64M", "Exec");
+            ProcessBuilder pb = new ProcessBuilder("java", "-cp", "execCommand/", "-Djava.security.manager", "-Djava.security.policy=execCommand/exec.policy", "-Xmx64M", "Exec");
             pb.redirectErrorStream(true);
             process = pb.start();
 
-            final Scanner scan = new Scanner(process.getInputStream());
-            while (scan.hasNext())
-                output.add(scan.nextLine());
-
+            try (final Scanner scan = new Scanner(process.getInputStream())) {
+                while (scan.hasNext())
+                    output.add(scan.nextLine());
+            }
             return 1;
         }
 

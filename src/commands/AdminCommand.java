@@ -18,7 +18,7 @@
 
 package commands;
 
-import Botster.IRCCommand;
+import botster.IRCCommand;
 
 import java.util.Set;
 
@@ -42,7 +42,7 @@ public class AdminCommand extends IRCCommand {
     }
 
     @Override
-    public String getReply(final String command, final String message) {
+    public String getReply(String command, String message) {
         String ret = null;
         if (isAuthorizedUser())
             switch (command) {
@@ -63,7 +63,7 @@ public class AdminCommand extends IRCCommand {
                     getBot().getCommandSender().changeNick(message);
                     break;
                 case "load":
-                    final Set<String> newCommands = getBot().loadCommand(message);
+                    Set<String> newCommands = getBot().loadCommand(message);
                     if (newCommands == null || newCommands.size() == 0)
                         ret = "Something went wrong; either you specified an unknown plugin or the plugin was already loaded.";
                     else

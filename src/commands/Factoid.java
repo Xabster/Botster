@@ -30,17 +30,17 @@ class Factoid {
     private String hostMask;
     private String text;
 
-    public Factoid(final String[] names, final String hostMask, final String text) {
+    public Factoid(String[] names, String hostMask, String text) {
         this.names = new HashSet<>(Arrays.asList(names));
-        setHostMask(hostMask);
-        setText(text);
+        this.hostMask = hostMask;
+        this.text = text;
     }
 
-    public void addName(final String s) {
+    public void addName(String s) {
         this.names.add(s);
     }
 
-    public void removeName(final String s) {
+    public void removeName(String s) {
         this.names.remove(s);
     }
 
@@ -48,7 +48,7 @@ class Factoid {
         return this.names;
     }
 
-    public boolean hasName(final String s) {
+    public boolean hasName(String s) {
         return this.names.stream().anyMatch(x -> x.equalsIgnoreCase(s));
     }
 
@@ -60,11 +60,11 @@ class Factoid {
         return this.text;
     }
 
-    public void setHostMask(final String hostMask) {
+    public void setHostMask(String hostMask) {
         this.hostMask = hostMask;
     }
 
-    public void setText(final String text) {
+    public void setText(String text) {
         this.text = text;
     }
 

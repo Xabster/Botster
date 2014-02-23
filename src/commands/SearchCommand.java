@@ -18,7 +18,7 @@
 
 package commands;
 
-import Botster.IRCCommand;
+import botster.IRCCommand;
 
 import java.net.URLEncoder;
 
@@ -38,7 +38,7 @@ public class SearchCommand extends IRCCommand {
     }
 
     @Override
-    public String getReply(final String command, final String message) {
+    public String getReply(String command, String message) {
         String ret = null;
         String search;
         try {

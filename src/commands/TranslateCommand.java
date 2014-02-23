@@ -18,7 +18,7 @@
 
 package commands;
 
-import Botster.IRCCommand;
+import botster.IRCCommand;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -44,7 +44,7 @@ public class TranslateCommand extends IRCCommand {
      *                translate
      */
     @Override
-    public String getReply(final String command, final String message) {
+    public String getReply(String command, String message) {
 
         String language = getChannel().equals("#java.de") ? "de" : "en";
 

@@ -18,7 +18,7 @@
 
 package commands;
 
-import Botster.IRCCommand;
+import botster.IRCCommand;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class HelpCommand extends IRCCommand {
     }
 
     @Override
-    public String getReply(final String command, final String message) {
+    public String getReply(String command, String message) {
         String ret = "";
         int page;
 
@@ -60,12 +60,12 @@ public class HelpCommand extends IRCCommand {
         return ret;
     }
 
-    String getPage(int page, final int perpage, final Collection<String> commands) {
+    String getPage(int page, int perpage, Collection<String> commands) {
 
-        final List<String> list = new ArrayList<>(commands);
+        List<String> list = new ArrayList<>(commands);
         Collections.sort(list);
 
-        final int totalPages = (list.size() - 1) / perpage + 1;
+        int totalPages = (list.size() - 1) / perpage + 1;
 
         if (page < 1)
             page = 1;
@@ -73,13 +73,13 @@ public class HelpCommand extends IRCCommand {
         if (page > totalPages)
             page = totalPages;
 
-        final int startIndex = (page - 1) * perpage;
+        int startIndex = (page - 1) * perpage;
 
-        final int endIndex = Math.min(page * perpage, list.size());
+        int endIndex = Math.min(page * perpage, list.size());
 
-        final List<String> sublist = list.subList(startIndex, endIndex);
+        List<String> sublist = list.subList(startIndex, endIndex);
 
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("Available commands");
 
         if (totalPages > 1) {
@@ -90,7 +90,7 @@ public class HelpCommand extends IRCCommand {
         }
 
         sb.append(": ");
-        for (final String s : sublist)
+        for (String s : sublist)
             sb.append(s).append(", ");
 
         sb.setLength(sb.length() - 2);

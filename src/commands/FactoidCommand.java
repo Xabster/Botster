@@ -1,7 +1,7 @@
 package commands;
 
-import Botster.Botster;
-import Botster.IRCCommand;
+import botster.Botster;
+import botster.IRCCommand;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -54,12 +54,12 @@ public class FactoidCommand extends IRCCommand {
         try (final Scanner scan = new Scanner(new File(FACTOIDS_TXT))) {
             factoids = new HashSet<>();
             while (scan.hasNext()) {
-                final String[] factoidNames = scan.nextLine().split(" ");
-                final String factoidHostMask = scan.nextLine();
-                final String factoidText = scan.nextLine();
-                final Factoid f = new Factoid(factoidNames, factoidHostMask, factoidText);
+                String[] factoidNames = scan.nextLine().split(" ");
+                String factoidHostMask = scan.nextLine();
+                String factoidText = scan.nextLine();
+                Factoid f = new Factoid(factoidNames, factoidHostMask, factoidText);
 
-                for (final String factoidName : factoidNames)
+                for (String factoidName : factoidNames)
                     addCommand(factoidName);
 
                 factoids.add(f);
@@ -70,7 +70,7 @@ public class FactoidCommand extends IRCCommand {
     }
 
     @Override
-    public String getReply(final String command, String message) {
+    public String getReply(String command, String message) {
         switch (command) {
             case FACTOID_COMMAND: {
                 return handleFactoidCommand(message);
@@ -107,7 +107,7 @@ public class FactoidCommand extends IRCCommand {
      */
     private void saveFactoids() {
         try (final PrintWriter pw = new PrintWriter(new File("factoids.txt"))) {
-            for (final Factoid f : factoids) {
+            for (Factoid f : factoids) {
                 pw.println(f.getNames().stream().collect(Collectors.joining(" ")));
                 pw.println(f.getHostMask());
                 pw.println(f.getText());
@@ -118,15 +118,15 @@ public class FactoidCommand extends IRCCommand {
         }
     }
 
-    private Factoid findFactoid(final String name) {
-        for (final Factoid f : factoids)
+    private Factoid findFactoid(String name) {
+        for (Factoid f : factoids)
             if (f.hasName(name))
                 return f;
         return null;
     }
 
     private String handleFactoid(String command, String message) {
-        final Factoid f = findFactoid(command);
+        Factoid f = findFactoid(command);
         if (f == null)
             return null;
         return message.isEmpty() ? f.toString() : message + ": " + f.toString();
@@ -136,7 +136,7 @@ public class FactoidCommand extends IRCCommand {
         if (message.startsWith("-") && message.length() > 1)
             message = message.substring(1);
 
-        final Factoid aliasesFactoid = findFactoid(message);
+        Factoid aliasesFactoid = findFactoid(message);
         if (aliasesFactoid == null)
             return String.format("Factoid '%s' was not found.", message);
 
@@ -147,7 +147,7 @@ public class FactoidCommand extends IRCCommand {
         if (!getChannel().startsWith("#"))
             return getNickName() + ", this command only works in channels.";
 
-        final Factoid f = findFactoid(message);
+        Factoid f = findFactoid(message);
         if (f == null)
             return getNickName() + ", that factoid does not exist.";
 
@@ -160,11 +160,11 @@ public class FactoidCommand extends IRCCommand {
     }
 
     private String handleUnaliasFactoid(String message) {
-        final Factoid unaliasFactoid = findFactoid(message);
+        Factoid unaliasFactoid = findFactoid(message);
         if (unaliasFactoid == null)
             return String.format("Factoid '%s' was not found.", message);
 
-        final Set<String> factoidNames = unaliasFactoid.getNames();
+        Set<String> factoidNames = unaliasFactoid.getNames();
         if (factoidNames.size() <= 1)
             return String.format("You cannot remove the last known alias for a factoid. If you really want to remove this factoid, use %s%s instead.", Botster.PREFIX, REMOVE_FACTOID);
 
@@ -174,13 +174,13 @@ public class FactoidCommand extends IRCCommand {
     }
 
     private String handleAliasFactoid(String message) {
-        final String[] factoidNames = message.split("\\s+");
+        String[] factoidNames = message.split("\\s+");
 
         if (factoidNames.length != 2)
             return "Please supply a current factoid and a new alias.";
 
-        final Factoid currentFactoid = findFactoid(factoidNames[0]);
-        final Factoid newFactoidAlias = findFactoid(factoidNames[1]);
+        Factoid currentFactoid = findFactoid(factoidNames[0]);
+        Factoid newFactoidAlias = findFactoid(factoidNames[1]);
 
         if (currentFactoid == null)
             return String.format("Factoid '%s' was not found.", factoidNames[0]);
@@ -206,9 +206,9 @@ public class FactoidCommand extends IRCCommand {
         if (!message.contains(" "))
             return getNickName() + ", you did not supply a factoid text.";
 
-        final String factoidName = message.substring(0, message.indexOf(" "));
-        final String factoidText = message.substring(message.indexOf(" ") + 1);
-        final Factoid updateFactoid = findFactoid(factoidName);
+        String factoidName = message.substring(0, message.indexOf(" "));
+        String factoidText = message.substring(message.indexOf(" ") + 1);
+        Factoid updateFactoid = findFactoid(factoidName);
 
         if (updateFactoid == null)
             return getNickName() + ", a factoid with that name does not exist; use " + Botster.PREFIX + ADD_FACTOID + " to create this factoid.";
@@ -221,7 +221,7 @@ public class FactoidCommand extends IRCCommand {
 
     private void handleFactoidHost(String message) {
         if (isAuthorizedUser()) {
-            final Factoid f = findFactoid(message);
+            Factoid f = findFactoid(message);
             if (f != null)
                 getBot().getCommandSender().sendMessage(getNickName(), String.format("The factoid %s%s was last updated by: %s", Botster.PREFIX, message, f.getHostMask()));
             else
@@ -236,8 +236,8 @@ public class FactoidCommand extends IRCCommand {
         if (!message.contains(" "))
             return getNickName() + ", you did not supply a factoid text.";
 
-        final String factoidName = message.substring(0, message.indexOf(" "));
-        final String factoidText = message.substring(message.indexOf(" ") + 1);
+        String factoidName = message.substring(0, message.indexOf(" "));
+        String factoidText = message.substring(message.indexOf(" ") + 1);
 
         if (getBot().getPublicCommands().contains(factoidName) || getBot().getRestrictedCommands().contains(factoidName))
             return getNickName() + ", there is already a command with that name.";
@@ -245,8 +245,8 @@ public class FactoidCommand extends IRCCommand {
         if (findFactoid(factoidName) != null)
             return getNickName() + ", a factoid with that name already exists; use " + Botster.PREFIX + UPDATE_FACTOID + " to update this factoid.";
 
-        final String factoidHostMask = String.format("%s!%s@%s", getNickName(), getLogin(), getHostName());
-        final Factoid newFactoid = new Factoid(new String[]{factoidName}, factoidHostMask, factoidText);
+        String factoidHostMask = String.format("%s!%s@%s", getNickName(), getLogin(), getHostName());
+        Factoid newFactoid = new Factoid(new String[]{factoidName}, factoidHostMask, factoidText);
         factoids.add(newFactoid);
         addCommand(factoidName);
         saveFactoids();

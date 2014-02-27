@@ -18,7 +18,7 @@
 
 package commands;
 
-import botster.IRCCommand;
+import botster.AbstractPlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * The APICommand provides API searches.
  */
-public class APICommand extends IRCCommand {
+public class APICommand extends AbstractPlugin {
     private static final int FIND_ALL = 0;
     private static final int FIND_CLASSES = 1;
     private static final int FIND_METHODS = 2;

@@ -18,7 +18,7 @@
 
 package commands;
 
-import botster.IRCCommand;
+import botster.AbstractPlugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +29,7 @@ import java.util.List;
  * The HelpCommand provides one response, by listing the available (public)
  * commands people can give.
  */
-public class HelpCommand extends IRCCommand {
+public class HelpCommand extends AbstractPlugin {
 
     public static final int RESULTS_PER_PAGE = 30;
 

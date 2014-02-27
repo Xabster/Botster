@@ -18,7 +18,7 @@
 
 package commands;
 
-import botster.IRCCommand;
+import botster.AbstractPlugin;
 
 import java.util.Set;
 
@@ -27,7 +27,7 @@ import java.util.Set;
  * such as having it quit, join/part channels, change nick name and reload
  * plugins.
  */
-public class AdminCommand extends IRCCommand {
+public class AdminCommand extends AbstractPlugin {
     /**
      * Creates a new AdminCommand and registers its options as restricted, so
      * they will not show up when someone requests the public commands.

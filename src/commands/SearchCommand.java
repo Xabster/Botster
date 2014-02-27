@@ -18,46 +18,48 @@
 
 package commands;
 
-import botster.IRCCommand;
+import botster.AbstractPlugin;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
  * The SearchCommand class allows searching via search engines.
  */
-public class SearchCommand extends IRCCommand {
+public class SearchCommand extends AbstractPlugin {
+    public static final String GOOGLE = "google";
+    public static final String LMGTFY = "lmgtfy";
+    public static final String WIKI = "wiki";
+    public static final String WIKIPEDIA = "wikipedia";
+
     /**
      * Creates a new instance of SearchCommand and registers the available
      * search engines.
      */
     public SearchCommand() {
-        addCommand("google");
-        addCommand("lmgtfy");
-        addCommand("wiki");
-        addCommand("wikipedia");
+        addCommand(GOOGLE);
+        addCommand(LMGTFY);
+        addCommand(WIKI);
+        addCommand(WIKIPEDIA);
     }
 
     @Override
     public String getReply(String command, String message) {
-        String ret = null;
         String search;
         try {
             search = URLEncoder.encode(message, "UTF-8");
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException e) {
             search = message;
         }
         switch (command) {
-            case "google":
-                ret = "http://www.google.com/search?q=" + search;
-                break;
-            case "lmgtfy":
-                ret = "http://lmgtfy.com/?q=" + search;
-                break;
-            case "wiki":
-            case "wikipedia":
-                ret = "http://en.wikipedia.org/wiki/Special:Search/" + search;
-                break;
+            case GOOGLE:
+                return "http://www.google.com/search?q=" + search;
+            case LMGTFY:
+                return "http://lmgtfy.com/?q=" + search;
+            case WIKI:
+            case WIKIPEDIA:
+                return "http://en.wikipedia.org/wiki/Special:Search/" + search;
         }
-        return ret;
+        return null;
     }
 }

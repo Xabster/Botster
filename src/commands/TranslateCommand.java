@@ -18,7 +18,7 @@
 
 package commands;
 
-import botster.IRCCommand;
+import botster.AbstractPlugin;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -27,7 +27,7 @@ import java.net.URLEncoder;
  * The TranslateCommand class allows for translation of foreign languages to
  * English.
  */
-public class TranslateCommand extends IRCCommand {
+public class TranslateCommand extends AbstractPlugin {
     /**
      * Creates a new instance of the TranslateCommand class and registers its
      * commands.

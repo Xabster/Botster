@@ -1,6 +1,6 @@
 package commands;
 
-import botster.IRCCommand;
+import botster.AbstractPlugin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,7 +15,7 @@ import java.util.concurrent.*;
  * <p>
  * Credits to Honk for originally making most of this ;)
  */
-public class ExecCommand extends IRCCommand {
+public class ExecCommand extends AbstractPlugin {
 
     private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
     public static final int MAX_LINE_LENGTH = 200;

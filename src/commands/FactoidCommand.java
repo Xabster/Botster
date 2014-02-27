@@ -1,7 +1,7 @@
 package commands;
 
+import botster.AbstractPlugin;
 import botster.Botster;
-import botster.IRCCommand;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * often. Factoids are read from factoids.txt, where each factoid consists of
  * two lines, the name of the factoid and the response.
  */
-public class FactoidCommand extends IRCCommand {
+public class FactoidCommand extends AbstractPlugin {
     private static final String UPDATE_FACTOID = "updatefactoid";
     private static final String ADD_FACTOID = "addfactoid";
     private static final String REMOVE_FACTOID = "removefactoid";

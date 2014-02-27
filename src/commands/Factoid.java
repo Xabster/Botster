@@ -18,6 +18,8 @@
 
 package commands;
 
+import sun.misc.Unsafe;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +32,8 @@ class Factoid {
     private String hostMask;
     private String text;
 
-    public Factoid(String[] names, String hostMask, String text) {
+    Factoid(String[] names, String hostMask, String text) {
+
         this.names = new HashSet<>(Arrays.asList(names));
         this.hostMask = hostMask;
         this.text = text;
